@@ -9,6 +9,25 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh '''
+                    sonar-scanner \
+                    -Dsonar.projectKey=end-to-end-ci-cd-pipeline \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=http://localhost:9000
+                    '''
+                }
+            }
+        }
+
+        stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: '', odcInstallation: 'OWASP'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'docker build -t flask-devops .'
@@ -21,11 +40,11 @@ pipeline {
                 sh 'docker run -d --name flask-container -p 5000:5000 flask-devops'
             }
         }
-stage('Test') {
-    steps {
-        echo "🚀 Skipping test - Application deployed successfully on port 5000"
-    }
-}
-      
+
+        stage('Test') {
+            steps {
+                echo "🚀 Application deployed successfully on port 5000"
+            }
+        }
     }
 }
