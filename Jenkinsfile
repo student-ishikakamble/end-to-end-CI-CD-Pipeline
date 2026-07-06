@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        sonarScanner 'sonar-scanner'
-    }
-
     stages {
 
         stage('Checkout') {
@@ -32,7 +28,7 @@ pipeline {
                     try {
                         dependencyCheck additionalArguments: '', odcInstallation: 'OWASP'
                     } catch (e) {
-                        echo "OWASP scan skipped or not configured properly"
+                        echo "OWASP not configured, skipping"
                     }
                 }
             }
@@ -55,8 +51,9 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo "🚀 Application deployed successfully on port 5000"
+                echo "🚀 App deployed successfully"
             }
         }
     }
 }
+
